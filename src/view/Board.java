@@ -27,8 +27,8 @@ public class Board {
 	private StackPane getRectangle(String content) {
 		Label label = new Label(content);
 		Rectangle rectangle = new Rectangle();
-		rectangle.setWidth(length);
-		rectangle.setHeight(height);
+		rectangle.setWidth(50);
+		rectangle.setHeight(50);
 		rectangle.setStroke(Color.BLACK);
 		rectangle.setFill(Color.WHITE);
 		return new StackPane(rectangle, label);
