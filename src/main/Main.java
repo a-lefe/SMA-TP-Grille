@@ -1,5 +1,6 @@
 package main;
 
+import controller.BoardController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -24,6 +25,9 @@ public class Main extends Application {
 		Scene scene = new Scene(board.gridPane, 500, 500);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+
+		BoardController controller = new BoardController(board);
+		controller.initAgents(5);
 
 	}
 

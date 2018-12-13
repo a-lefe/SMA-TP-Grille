@@ -10,6 +10,7 @@ import javafx.util.Pair;
 public class Board {
 
 	public GridPane gridPane;
+
 	public static int length, height;
 
 	public String[][] positions;
@@ -49,4 +50,7 @@ public class Board {
 
 	}
 
+	public GridPane getGridPane() {
+		return gridPane;
+	}
 }

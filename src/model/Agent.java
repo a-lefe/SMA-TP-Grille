@@ -13,12 +13,12 @@ public class Agent extends Observable {
 	Integer id;
 	List<Agent> agents;
 	Stack<String> mailbox;
-	//Pair<Ligne, Colonne>
+	// Pair<Ligne, Colonne>
 	Pair<Integer, Integer> finalPos;
 	Pair<Integer, Integer> actualPos;
 	Boolean blocked;
-	
-	public Agent(Integer id, Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos){
+
+	public Agent(Integer id, Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos) {
 		this.id = id;
 		this.agents = new ArrayList<>();
 		this.mailbox = new Stack<>();
@@ -38,6 +38,22 @@ public class Agent extends Observable {
 
 	public synchronized void setPosition(Pair<Integer, Integer> pos) {
 		this.actualPos = pos;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Pair<Integer, Integer> getActualPos() {
+		return actualPos;
+	}
+
+	public void setActualPos(Pair<Integer, Integer> actualPos) {
+		this.actualPos = actualPos;
 	}
 
 }
