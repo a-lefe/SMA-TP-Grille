@@ -17,10 +17,12 @@ public class BoardController {
 	public String[][] initialState, finalState;
 	Board board;
 	private Map<Integer, Agent> agents;
+	private Integer nbAgent;
 
 	public BoardController(Board board) {
 		this.board = board;
-		agents = new HashMap<>();
+		this.nbAgent = board.getNbAgent();
+		this.agents = new HashMap<>();
 	}
 
 	public void initAgents(Integer nbAgents) {
@@ -29,22 +31,23 @@ public class BoardController {
 			return;
 		}
 		Label r;
+		Agent a;
 		List<Pair<Integer, Integer>> startPositions = new ArrayList<>();
 		List<Pair<Integer, Integer>> finalPositions = new ArrayList<>();
 		Pair<Integer, Integer> pStart, pFinal;
 		for (int i = 0; i < nbAgents; i++) {
 			// Start position
-
 			pStart = generateRandomPos(startPositions);
 			r = (Label) ((StackPane) board.getGridPane().getChildren()
 					.get(pStart.getKey() * Board.length + pStart.getValue())).getChildren().get(1);
-			r.setText("X" + i);
+			r.setText("" + i);
 
 			// Final position
 			pFinal = generateRandomPos(finalPositions);
 			finalPositions.add(pFinal);
-
-			agents.put(i, new Agent(i, board, pStart, pFinal));
+			a = new Agent(i, board, pStart, pFinal);
+			a.addObserver(board);
+			agents.put(i, a);
 		}
 	}
 

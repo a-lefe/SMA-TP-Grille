@@ -1,21 +1,29 @@
 package view;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
+import model.Mailbox;
 
-public class Board {
+public class Board implements Observer {
 
-	public GridPane gridPane;
+	private GridPane gridPane;
 
 	public static int length, height;
 
-	public String[][] positions;
+	private String[][] positions;
+	private Integer nbAgent;
+	private Mailbox mailbox;
 
-	public Board() {
+	public Board(Integer nbAgent) {
+		this.nbAgent = nbAgent;
+		this.mailbox = new Mailbox(nbAgent);
 		length = 5;
 		height = 5;
 		gridPane = new GridPane();
@@ -52,5 +60,19 @@ public class Board {
 
 	public GridPane getGridPane() {
 		return gridPane;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Integer getNbAgent() {
+		return nbAgent;
+	}
+
+	public Mailbox getMailbox() {
+		return mailbox;
 	}
 }
