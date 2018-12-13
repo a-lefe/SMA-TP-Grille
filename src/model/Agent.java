@@ -10,17 +10,22 @@ import view.Board;
 
 public class Agent extends Observable{
 	Board grid;
+	Integer id;
 	List<Agent> agents;
 	Stack<String> mailbox;
+	//Pair<Ligne, Colonne>
 	Pair<Integer, Integer> finalPos;
 	Pair<Integer, Integer> actualPos;
+	Boolean blocked;
 	
-	public Agent(Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos){
+	public Agent(Integer id, Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos){
+		this.id = id;
 		this.agents = new ArrayList<>();
 		this.mailbox = new Stack<>();
 		this.grid = grid;
 		this.finalPos = finalPos;
 		this.actualPos = initialPos;
+		this.blocked = false;
 	}
 	
 	public void addAgent(Agent a){
