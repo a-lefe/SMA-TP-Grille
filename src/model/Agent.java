@@ -8,30 +8,31 @@ import java.util.Stack;
 import javafx.util.Pair;
 import view.Board;
 
-public class Agent extends Observable{
+public class Agent extends Observable {
 	Board grid;
 	List<Agent> agents;
 	Stack<String> mailbox;
 	Pair<Integer, Integer> finalPos;
 	Pair<Integer, Integer> actualPos;
-	
-	public Agent(Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos){
+
+	public Agent(Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos) {
 		this.agents = new ArrayList<>();
 		this.mailbox = new Stack<>();
 		this.grid = grid;
 		this.finalPos = finalPos;
 		this.actualPos = initialPos;
 	}
-	
-	public void addAgent(Agent a){
+
+	public void addAgent(Agent a) {
 		this.agents.add(a);
 	}
-	
-	public void addMessage(String message){
+
+	public void addMessage(String message) {
 		this.mailbox.add(message);
 	}
-	
-	public synchronized void setPosition(Pair<Integer, Integer> pos){
-		
+
+	public synchronized void setPosition(Pair<Integer, Integer> pos) {
+		this.actualPos = pos;
 	}
+
 }
