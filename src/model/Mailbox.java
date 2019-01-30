@@ -20,7 +20,9 @@ public class Mailbox {
 	}
 
 	public synchronized String retriveMessage(Integer id) {
-		return mailbox.get(id).pop();
+		Stack<String> s = mailbox.get(id);
+		if(s.isEmpty()) return null;
+		return s.pop();
 	}
 
 }

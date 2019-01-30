@@ -1,8 +1,5 @@
 package view;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -11,13 +8,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 import model.Mailbox;
 
-public class Board implements Observer {
+public class Board {
 
 	private GridPane gridPane;
 
 	public static int length, height;
 
-	private String[][] positions;
 	private Integer nbAgent;
 	private Mailbox mailbox;
 
@@ -48,24 +44,16 @@ public class Board implements Observer {
 		return new StackPane(rectangle, label);
 	}
 
-	public synchronized boolean isFree(Pair<Integer, Integer> pos) {
+	public synchronized String fecthAgentIdInPos(Pair<Integer, Integer> pos) {
 		Integer row = pos.getKey();
 		Integer column = pos.getValue();
 		Label r = (Label) ((StackPane) gridPane.getChildren().get(row * height + column)).getChildren().get(1);
-		if (r.getText().equals(""))
-			return true;
-		return false;
+		return r.getText();
 
 	}
 
 	public GridPane getGridPane() {
 		return gridPane;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public Integer getNbAgent() {

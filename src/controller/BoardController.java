@@ -1,6 +1,5 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +7,8 @@ import java.util.Random;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 import model.Agent;
 import view.Board;
@@ -23,32 +24,6 @@ public class BoardController {
 		this.board = board;
 		this.nbAgent = board.getNbAgent();
 		this.agents = new HashMap<>();
-	}
-
-	public void initAgents(Integer nbAgents) {
-		if (nbAgents > Board.length * Board.height - 1) {
-			System.out.println("Can't initialize - Cause : Number of agents > Number of tiles");
-			return;
-		}
-		Label r;
-		Agent a;
-		List<Pair<Integer, Integer>> startPositions = new ArrayList<>();
-		List<Pair<Integer, Integer>> finalPositions = new ArrayList<>();
-		Pair<Integer, Integer> pStart, pFinal;
-		for (int i = 0; i < nbAgents; i++) {
-			// Start position
-			pStart = generateRandomPos(startPositions);
-			r = (Label) ((StackPane) board.getGridPane().getChildren()
-					.get(pStart.getKey() * Board.length + pStart.getValue())).getChildren().get(1);
-			r.setText("" + i);
-
-			// Final position
-			pFinal = generateRandomPos(finalPositions);
-			finalPositions.add(pFinal);
-			a = new Agent(i, board, pStart, pFinal);
-			a.addObserver(board);
-			agents.put(i, a);
-		}
 	}
 
 	public Pair<Integer, Integer> generateRandomPos(List<Pair<Integer, Integer>> positions) {
@@ -69,4 +44,32 @@ public class BoardController {
 		agents.remove(agent.getId());
 	}
 
+	public void applyLabel(Agent a, String colorHexa){
+		Label r = (Label) ((StackPane) board.getGridPane().getChildren()
+				.get(a.getActualPos().getKey() * Board.length + a.getActualPos().getValue())).getChildren().get(1);
+		r.setText("" + a.getId());
+		r.setTextFill(Color.web(colorHexa));
+	}
+
+	public Map<Integer, Agent> getAgents() {
+		return agents;
+	}
+
+	public void updateLabel(Agent a, String color, Pair<Integer, Integer> posTo) {
+		StackPane actual = (StackPane) board.getGridPane().getChildren()
+				.get(a.getActualPos().getKey() * Board.length + a.getActualPos().getValue());
+		StackPane to = (StackPane) board.getGridPane().getChildren()
+				.get(posTo.getKey() * Board.length + posTo.getValue());
+		((Label)to.getChildren().get(1)).setText(a.getId().toString());
+		((Label)actual.getChildren().get(1)).setText("");
+		((Rectangle)to.getChildren().get(0)).setFill(a.getColor());
+		((Rectangle)actual.getChildren().get(0)).setFill(Color.WHITE);
+		a.setActualPos(posTo);
+		if(a.getActualPos().equals(a.getFinalPos())){
+			((Label)to.getChildren().get(1)).setTextFill(Color.WHITE);
+		}
+		else{
+			((Label)to.getChildren().get(1)).setTextFill(Color.BLACK);
+		}
+	}
 }
