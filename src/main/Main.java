@@ -10,8 +10,16 @@ import java.util.Scanner;
 import controller.BoardController;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import model.Agent;
@@ -32,6 +40,7 @@ public class Main extends Application implements Observer {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Jeu");
+		HBox hBox = new HBox();
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Nombre d'agent :");
 		Integer nbAgent = Integer.valueOf(scan.nextLine());
@@ -42,7 +51,31 @@ public class Main extends Application implements Observer {
 		initAgents(nbAgent);
 		//initTest();
 		
-		Scene scene = new Scene(board.getGridPane(), 500, 500);
+		GridPane result = new GridPane();
+		for (int i = 0; i < Board.length; i++) {
+			for (int j = 0; j < Board.height; j++) {
+				StackPane pane = board.getRectangle("", Color.WHITE);
+				result.add(pane, i, j);
+			}
+		}
+		Agent a;
+		Label r;
+		Rectangle rec;
+		for(Entry<Integer, Agent> entry : controller.getAgents().entrySet()){
+			a = entry.getValue();
+			r = (Label) ((StackPane) result.getChildren()
+					.get(a.getFinalPos().getKey() * Board.length + a.getFinalPos().getValue())).getChildren().get(1);
+			r.setText("" + a.getId());
+			r.setTextFill(Color.web("#000000"));
+			rec = (Rectangle) ((StackPane) result.getChildren()
+					.get(a.getFinalPos().getKey() * Board.length + a.getFinalPos().getValue())).getChildren().get(0);
+			rec.setFill(a.getColor());
+		}
+		
+		hBox.getChildren().addAll(board.getGridPane(), result);
+		HBox.setMargin(result, new Insets(0d, 4d, 0d, 4d));
+		HBox.setMargin(board.getGridPane(), new Insets(0d, 4d, 0d, 4d));
+		Scene scene = new Scene(hBox, 600, 250);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		

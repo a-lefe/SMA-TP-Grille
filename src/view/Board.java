@@ -43,6 +43,16 @@ public class Board {
 		rectangle.setFill(Color.WHITE);
 		return new StackPane(rectangle, label);
 	}
+	
+	public StackPane getRectangle(String content, Color color) {
+		Label label = new Label(content);
+		Rectangle rectangle = new Rectangle();
+		rectangle.setWidth(50);
+		rectangle.setHeight(50);
+		rectangle.setStroke(Color.BLACK);
+		rectangle.setFill(color);
+		return new StackPane(rectangle, label);
+	}
 
 	public synchronized String fecthAgentIdInPos(Pair<Integer, Integer> pos) {
 		Integer row = pos.getKey();
