@@ -1,11 +1,18 @@
 package view;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import controller.BoardController;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
+import model.Agent;
+import model.MailBoxV2;
 import model.Mailbox;
 
 public class Board {
@@ -16,10 +23,13 @@ public class Board {
 
 	private Integer nbAgent;
 	private Mailbox mailbox;
+	private MailBoxV2 mailBoxV2;
+	private BoardController boardController;
 
 	public Board(Integer nbAgent) {
 		this.nbAgent = nbAgent;
 		this.mailbox = new Mailbox(nbAgent);
+		this.mailBoxV2 = new MailBoxV2(nbAgent);
 		length = 5;
 		height = 5;
 		gridPane = new GridPane();
@@ -61,6 +71,24 @@ public class Board {
 		return r.getText();
 
 	}
+	
+	public Agent getAgentAround(Pair<Integer, Integer> pos){
+		Random r = new Random();
+		List<Agent> agents = new ArrayList<>();
+		String agent = fecthAgentIdInPos(new Pair<Integer, Integer>(pos.getKey() - 1, pos.getValue()));
+		if (!agent.isEmpty() && !boardController.getAgents().get(Integer.valueOf(agent)).getBlocked())
+			agents.add(boardController.getAgents().get(Integer.valueOf(agent)));
+		agent = fecthAgentIdInPos(new Pair<Integer, Integer>(pos.getKey() + 1, pos.getValue()));
+		if (!agent.isEmpty() && !boardController.getAgents().get(Integer.valueOf(agent)).getBlocked())
+			agents.add(boardController.getAgents().get(Integer.valueOf(agent)));
+		agent = fecthAgentIdInPos(new Pair<Integer, Integer>(pos.getKey(), pos.getValue() - 1));
+		if (!agent.isEmpty() && !boardController.getAgents().get(Integer.valueOf(agent)).getBlocked())
+			agents.add(boardController.getAgents().get(Integer.valueOf(agent)));
+		agent = fecthAgentIdInPos(new Pair<Integer, Integer>(pos.getKey(), pos.getValue() + 1));
+		if (!agent.isEmpty() && !boardController.getAgents().get(Integer.valueOf(agent)).getBlocked())
+			agents.add(boardController.getAgents().get(Integer.valueOf(agent)));
+		return agents.get(r.nextInt(agents.size()));
+	}
 
 	public GridPane getGridPane() {
 		return gridPane;
@@ -72,5 +100,13 @@ public class Board {
 
 	public Mailbox getMailbox() {
 		return mailbox;
+	}
+
+	public MailBoxV2 getMailBoxV2() {
+		return mailBoxV2;
+	}
+
+	public void setBoardController(BoardController boardController) {
+		this.boardController = boardController;
 	}
 }

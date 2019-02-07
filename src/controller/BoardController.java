@@ -15,13 +15,13 @@ import view.Board;
 
 public class BoardController {
 
-	public String[][] initialState, finalState;
-	Board board;
+	private Board board;
 	private Map<Integer, Agent> agents;
 	private Integer nbAgent;
 
 	public BoardController(Board board) {
 		this.board = board;
+		this.board.setBoardController(this);
 		this.nbAgent = board.getNbAgent();
 		this.agents = new HashMap<>();
 	}

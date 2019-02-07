@@ -1,12 +1,20 @@
 package model;
 
 public class Message {
-	public Integer idAgent;
-	public Direction direction;
+	public Integer from;
+	public TypeMessage typeMessage;
 
-	public Message(Integer idAgent, Direction direction) {
+	public Message(Integer from, TypeMessage type) {
 		super();
-		this.idAgent = idAgent;
-		this.direction = direction;
+		this.from = from;
+		this.typeMessage = type;
+	}
+
+	public Integer getFrom() {
+		return from;
+	}
+
+	public TypeMessage getTypeMessage() {
+		return typeMessage;
 	}
 }

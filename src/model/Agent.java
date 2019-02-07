@@ -17,14 +17,16 @@ public class Agent extends Observable implements Runnable {
 	Pair<Integer, Integer> finalPos;
 	Pair<Integer, Integer> actualPos;
 	Boolean blocked;
+	Boolean allMoved;
 
-	public Agent(Integer id, Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos) {
+	public Agent(Integer id, Board grid, Pair<Integer, Integer> initialPos, Pair<Integer, Integer> finalPos, Boolean allMoves) {
 		this.id = id;
 		this.board = grid;
 		this.finalPos = finalPos;
 		this.actualPos = initialPos;
 		this.color = Color.color(Math.random(), Math.random(), Math.random());
 		this.blocked = false;
+		this.allMoved = allMoves;
 	}
 
 	public synchronized void setPosition(Pair<Integer, Integer> pos) {
@@ -73,6 +75,25 @@ public class Agent extends Observable implements Runnable {
 			return null;
 		}
 	}
+	
+	public synchronized Pair<Integer, Integer> dumbMoveV2() {
+		// actualPos.getKey() = colonne
+		// acutalPos.getValue() = ligne
+		Message message;
+		Pair<Integer, Integer> nextStep = null;
+		if(finalPos == null || actualPos == null) return null;
+		if (actualPos.getKey() < finalPos.getKey()) {
+			nextStep = new Pair<Integer, Integer>(actualPos.getKey() + 1, actualPos.getValue());
+		} else if (actualPos.getKey() > finalPos.getKey()) {
+			nextStep = new Pair<Integer, Integer>(actualPos.getKey() - 1, actualPos.getValue());
+		} else if (actualPos.getValue() < finalPos.getValue()) {
+			nextStep = new Pair<Integer, Integer>(actualPos.getKey(), actualPos.getValue() + 1);
+		} else if (actualPos.getValue() > finalPos.getValue()) {
+			nextStep = new Pair<Integer, Integer>(actualPos.getKey(), actualPos.getValue() - 1);
+		} else
+			return null;
+		return nextStep;
+	}
 
 	public synchronized List<Pair<Integer, Integer>> findAvalaibleMoves() {
 		List<Pair<Integer, Integer>> moves = new ArrayList<>();
@@ -93,6 +114,89 @@ public class Agent extends Observable implements Runnable {
 
 	@Override
 	public void run() {
+		if(allMoved){
+			allMove();
+		}
+		else{
+			resolveOnePerOne();
+		}
+	}
+	
+	private void resolveOnePerOne(){
+		try {
+			Message message;
+			List<Pair<Integer, Integer>> moves;
+			Pair<Integer, Integer> move = null;
+			Agent agent = null;
+			Integer agentFrom = 0;
+			Random r = new Random();
+			Boolean messageReceived; 
+			while (true) {
+				Thread.sleep(2000);
+				if(!this.blocked){
+					move = null;
+					message = board.getMailBoxV2().retriveMessage(id);
+					moves = findAvalaibleMoves();
+					if (message != null) {
+						if(message.getTypeMessage() == TypeMessage.MOVE){
+							agentFrom = message.getFrom();
+							moves = findAvalaibleMoves();
+							if(moves.isEmpty()){
+								agent = board.getAgentAround(actualPos);
+								move = agent.getActualPos();
+								message = new Message(this.id, TypeMessage.MOVE);
+								board.getMailBoxV2().postMessage(agent.getId(), message);
+								messageReceived = false;
+								while(!messageReceived){
+									Thread.sleep(1000);
+									message = board.getMailBoxV2().retriveMessage(this.id);
+									if(message != null && message.getTypeMessage() == TypeMessage.MOVED){
+										messageReceived = true;
+									}
+								}
+							}
+							else{
+								move = moves.get(r.nextInt(moves.size()));
+							}
+
+							if(move != null){
+								setChanged();
+								notifyObservers(move);
+								board.getMailBoxV2().postMessage(agentFrom, new Message(this.id, TypeMessage.MOVED));
+							}
+						}
+						else{
+							while (!actualPos.equals(finalPos)) {
+								move = dumbMoveV2();
+								String agentId = board.fecthAgentIdInPos(move);
+								if (!agentId.isEmpty()) {
+									this.board.getMailBoxV2().postMessage(Integer.valueOf(agentId), new Message(this.id, TypeMessage.MOVE));
+									messageReceived = false;
+									while(!messageReceived){
+										Thread.sleep(1000);
+										message = board.getMailBoxV2().retriveMessage(this.id);
+										if(message != null && message.getTypeMessage() == TypeMessage.MOVED){
+											messageReceived = true;
+										}
+									}
+								}
+								setChanged();
+								notifyObservers(move);
+								Thread.sleep(1000);
+							}
+							this.blocked = true;
+							System.out.println("Agent " + this.id + " arrived, ask next to move");
+							board.getMailBoxV2().postMessage(this.id, new Message(this.id, TypeMessage.RESOLVE));
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void allMove(){
 		try {
 			String message;
 			List<Pair<Integer, Integer>> moves;
@@ -131,7 +235,6 @@ public class Agent extends Observable implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public Pair<Integer, Integer> getFinalPos() {
@@ -146,5 +249,9 @@ public class Agent extends Observable implements Runnable {
 
 	public Color getColor() {
 		return color;
+	}
+
+	public Boolean getBlocked() {
+		return blocked;
 	}
 }
