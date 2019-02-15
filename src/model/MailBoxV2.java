@@ -9,7 +9,7 @@ public class MailBoxV2 {
 
 	public MailBoxV2(Integer nbAgent) {
 		mailbox = new HashMap<>();
-		for (int i = 0; i < nbAgent; ++i) {
+		for (int i = 0; i <= nbAgent; ++i) {
 			mailbox.put(i, new Stack<>());
 		}
 	}
@@ -20,7 +20,8 @@ public class MailBoxV2 {
 
 	public synchronized Message retriveMessage(Integer id) {
 		Stack<Message> s = mailbox.get(id);
-		if(s.isEmpty()) return null;
+		if (s.isEmpty())
+			return null;
 		return s.pop();
 	}
 }

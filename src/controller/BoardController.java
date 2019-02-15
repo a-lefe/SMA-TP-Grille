@@ -44,11 +44,12 @@ public class BoardController {
 		agents.remove(agent.getId());
 	}
 
-	public void applyLabel(Agent a, String colorHexa){
+	public void applyLabel(Agent a, String colorHexa) {
 		Label r = (Label) ((StackPane) board.getGridPane().getChildren()
 				.get(a.getActualPos().getKey() * Board.length + a.getActualPos().getValue())).getChildren().get(1);
 		r.setText("" + a.getId());
 		r.setTextFill(Color.web(colorHexa));
+		updateLabel(a, colorHexa, a.getActualPos());
 	}
 
 	public Map<Integer, Agent> getAgents() {
@@ -60,16 +61,15 @@ public class BoardController {
 				.get(a.getActualPos().getKey() * Board.length + a.getActualPos().getValue());
 		StackPane to = (StackPane) board.getGridPane().getChildren()
 				.get(posTo.getKey() * Board.length + posTo.getValue());
-		((Label)to.getChildren().get(1)).setText(a.getId().toString());
-		((Label)actual.getChildren().get(1)).setText("");
-		((Rectangle)to.getChildren().get(0)).setFill(a.getColor());
-		((Rectangle)actual.getChildren().get(0)).setFill(Color.WHITE);
+		((Label) to.getChildren().get(1)).setText(a.getId().toString());
+		((Label) actual.getChildren().get(1)).setText("");
+		((Rectangle) to.getChildren().get(0)).setFill(a.getColor());
+		((Rectangle) actual.getChildren().get(0)).setFill(Color.WHITE);
 		a.setActualPos(posTo);
-		if(a.getActualPos().equals(a.getFinalPos())){
-			((Label)to.getChildren().get(1)).setTextFill(Color.WHITE);
-		}
-		else{
-			((Label)to.getChildren().get(1)).setTextFill(Color.BLACK);
+		if (a.getActualPos().equals(a.getFinalPos())) {
+			((Label) to.getChildren().get(1)).setTextFill(Color.WHITE);
+		} else {
+			((Label) to.getChildren().get(1)).setTextFill(Color.BLACK);
 		}
 	}
 }

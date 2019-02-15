@@ -1,8 +1,8 @@
 package main;
 
-import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -13,10 +13,8 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -31,7 +29,7 @@ public class Main extends Application implements Observer {
 
 	private Board board;
 	private BoardController controller;
-	
+
 	public Main() {
 	}
 
@@ -51,15 +49,14 @@ public class Main extends Application implements Observer {
 		String mode = scan.nextLine();
 		Boolean supportedOption = false;
 		Integer nbAgent = 2;
-		while(!supportedOption){
-			if("1".equals(mode)){
+		while (!supportedOption) {
+			if ("1".equals(mode)) {
 				board = new Board(nbAgent);
 				board.draw();
 				controller = new BoardController(board);
 				supportedOption = true;
 				initTest();
-			}
-			else if("2".equals(mode)){
+			} else if ("2".equals(mode)) {
 				System.out.println("Nombre d'agent :");
 				nbAgent = Integer.valueOf(scan.nextLine());
 				board = new Board(nbAgent);
@@ -67,8 +64,7 @@ public class Main extends Application implements Observer {
 				controller = new BoardController(board);
 				supportedOption = true;
 				initAgents(nbAgent, true);
-			}
-			else if("3".equals(mode)){
+			} else if ("3".equals(mode)) {
 				System.out.println("Nombre d'agent :");
 				nbAgent = Integer.valueOf(scan.nextLine());
 				board = new Board(nbAgent);
@@ -77,8 +73,7 @@ public class Main extends Application implements Observer {
 				supportedOption = true;
 				initAgents(nbAgent, false);
 				board.getMailBoxV2().postMessage(1, new Message(0, TypeMessage.RESOLVE));
-			}
-			else{
+			} else {
 				System.out.println("Option non supportée");
 				System.out.println("Type de programme :");
 				System.out.println("1 - Résolution basique 2 agents");
@@ -86,34 +81,37 @@ public class Main extends Application implements Observer {
 				System.out.println("3 - Déplacement agent par agent");
 			}
 		}
-		
+
 		GridPane result = drawFinishGrid();
-		
+
 		hBox.getChildren().addAll(board.getGridPane(), result);
 		HBox.setMargin(result, new Insets(0d, 4d, 0d, 4d));
 		HBox.setMargin(board.getGridPane(), new Insets(0d, 4d, 0d, 4d));
 		Scene scene = new Scene(hBox, 600, 250);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
+
 		Thread t;
-		for(Entry<Integer, Agent> entry : controller.getAgents().entrySet()){
+		for (Entry<Integer, Agent> entry : controller.getAgents().entrySet()) {
 			controller.updateLabel(entry.getValue(), "#000000", entry.getValue().getActualPos());
+			entry.getValue().draw();
 			t = new Thread(entry.getValue());
 			t.start();
 		}
 	}
-	
+
 	@Override
 	public void update(Observable o, Object arg) {
 		Agent a = (Agent) o;
 		Pair<Integer, Integer> posTo = (Pair<Integer, Integer>) arg;
 		String color;
-		if(a.getActualPos().equals(a.getFinalPos()))
+		if (a.getActualPos().equals(a.getFinalPos()))
 			color = "#00FF00";
 		else
 			color = "#000000";
-		Platform.runLater(() -> {controller.updateLabel(a, color, posTo);});
+		Platform.runLater(() -> {
+			controller.updateLabel(a, color, posTo);
+		});
 	}
 
 	private void initTest() {
@@ -126,7 +124,7 @@ public class Main extends Application implements Observer {
 		controller.applyLabel(agent1, "#000000");
 		controller.applyLabel(agent2, "#000000");
 	}
-	
+
 	public void initAgents(Integer nbAgents, Boolean allMoved) {
 		if (nbAgents > Board.length * Board.height - 1) {
 			System.out.println("Can't initialize - Cause : Number of agents > Number of tiles");
@@ -149,8 +147,8 @@ public class Main extends Application implements Observer {
 			controller.addAgent(a);
 		}
 	}
-	
-	public GridPane drawFinishGrid(){
+
+	public GridPane drawFinishGrid() {
 		GridPane result = new GridPane();
 		for (int i = 0; i < Board.length; i++) {
 			for (int j = 0; j < Board.height; j++) {
@@ -161,8 +159,9 @@ public class Main extends Application implements Observer {
 		Agent a;
 		Label r;
 		Rectangle rec;
-		for(Entry<Integer, Agent> entry : controller.getAgents().entrySet()){
-			if(entry.getValue().getFinalPos() == null) continue;
+		for (Entry<Integer, Agent> entry : controller.getAgents().entrySet()) {
+			if (entry.getValue().getFinalPos() == null)
+				continue;
 			a = entry.getValue();
 			r = (Label) ((StackPane) result.getChildren()
 					.get(a.getFinalPos().getKey() * Board.length + a.getFinalPos().getValue())).getChildren().get(1);
